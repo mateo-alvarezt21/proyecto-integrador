@@ -19,6 +19,7 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 # Rango de las hojas de cálculo
 RANGE1 = "Sheet1!A:E"
 RANGE2 = "Sheet2!A:E"
+RANGE3 = "Sheet3!A:E"
 
 # Configuración de las credenciales
 def get_google_sheet_service():
@@ -60,49 +61,72 @@ def update_sheet(sheet, spreadsheet_id, df):
         st.error(f"Error al actualizar la hoja de cálculo: {e}")
         return None
 
+def update_sheet2(sheet, spreadsheet_id, df):
+    try:
+        body = {'values': df.values.tolist()}
+        result = sheet.values().update(
+            spreadsheetId=spreadsheet_id, range=RANGE3,
+            valueInputOption="USER_ENTERED", body=body).execute()
+        return result
+    except Exception as e:
+        st.error(f"Error al actualizar la hoja de cálculo: {e}")
+        return None
+
 # Main
 def main():
-    # Ingreso del ID de la hoja de cálculo
     spreadsheet_id = st.text_input("ID de la hoja de cálculo")
 
-    # Verificar si se ha proporcionado el ID
     if not spreadsheet_id:
         st.info("Por favor, ingresa el ID de la hoja de cálculo.")
         return
 
-    # Obtener el servicio de Google Sheets
     sheet = get_google_sheet_service()
     if not sheet:
         return
 
-    # Botón para leer los datos
     if st.button("Analizar datos de Google Sheet"):
-        # Leer datos de "Sheet1"
         df = read_sheet(sheet, spreadsheet_id)
         if df.empty:
-            return  # Si el DataFrame está vacío, no continuar
+            return
 
         st.header("Datos de la Hoja 1")
         st.dataframe(df)
 
-        # Realizar una operación (por ejemplo, suma de una columna específica)
         if 'Columna2' in df.columns:
-            df['Columna2'] = pd.to_numeric(df['Columna2'], errors='coerce')  # Convertir a numérico
-            suma = df['Columna2'].sum()  # Sumar la columna
-            st.write(f"Suma de la columna 'Columna2': {suma}")
+            df['Columna2'] = pd.to_numeric(df['Columna2'], errors='coerce')
+            suma = df['Columna2'].sum()
+            resta = df['Columna2'].sub(2)
 
-            # Crear un DataFrame para actualizar "Sheet2" con el resultado de la operación
+            st.write(f"Suma de la columna 'Columna2': {suma}")
+            st.write(f"Resta de la columna 'Columna2': {resta.tolist()}")
+
+            # Crear un DataFrame para actualizar "Sheet2"
             df_update = pd.DataFrame({
                 'Resultado': ['Suma de Columna2'],
                 'Valor': [suma]
             })
 
+            # Crear un DataFrame para actualizar "Sheet3"
+            df_update2 = pd.DataFrame({
+                'Resultado': ['Resta de Columna2'] * len(resta),  # Repetir la etiqueta para cada valor
+                'Valor': resta.tolist()  # Convertir a lista
+            })
+
             # Actualizar "Sheet2" con el resultado
             result = update_sheet(sheet, spreadsheet_id, df_update)
+
+            # Actualizar "Sheet3" con el resultado
+            result2 = update_sheet2(sheet, spreadsheet_id, df_update2)
+
             if result:
                 st.header("Datos de la Hoja 2")
                 st.success(f"Hoja actualizada. {result.get('updatedCells')} celdas actualizadas.")
                 st.dataframe(df_update)
+
+            if result2:
+                st.header("Datos de la Hoja 3")
+                st.success(f"Hoja 3 actualizada. {result2.get('updatedCells')} celdas actualizadas.")
+                st.dataframe(df_update2)
         else:
             st.error("La columna 'Columna2' no existe en la hoja de cálculo.")
 
