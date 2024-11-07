@@ -23,24 +23,24 @@ with col1:
     st.write("Descansar los ojos")
 
 with col2:
-    st.image("./static/user.png", width=200)  # Reemplaza con la ruta de la foto
+    st.image("./static/Mateo.jpg", width=200)  # Reemplaza con la ruta de la foto
     st.write("**Mateo Alvarez**")
     st.write("Dormir")
 
 with col3:
-    st.image("./static/user.png", width=200)  # Reemplaza con la ruta de la foto
+    st.image("./static/Johana.png", width=200)  # Reemplaza con la ruta de la foto
     st.write("**Johana**")
     st.write("No Ir a Clase")
 
 col4, col5, = st.columns(2)
 
 with col4:
-    st.image("./static/user.png", width=200)  # Reemplaza con la ruta de la foto
+    st.image("./static/Alexander.png", width=200)  # Reemplaza con la ruta de la foto
     st.write("**Alexander Rubiano**")
     st.write("No Hacer Nada")
 
 with col5:
-    st.image("./static/user.png", width=200)  # Reemplaza con la ruta de la foto
+    st.image("./static/Angello.png", width=200)  # Reemplaza con la ruta de la foto
     st.write("**Angello Gomez**")
     st.write("No Ayudar")
 
