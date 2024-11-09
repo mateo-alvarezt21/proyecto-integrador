@@ -16,26 +16,106 @@ kills_df = pd.read_csv('archive/kills.csv')
 structures_df = pd.read_csv('archive/structures.csv')
 
 # Tabs para organizar el contenido
-tab_descripcion, tab_frecuencia_campeones, tab_bans, tab_comparativo, tab_ganadores, tab_gold, tab_kills, tab_structures = st.tabs([
-    "Descripción", "Frecuencia de Campeones por Rol", "Frecuencia de Bans", "Análisis Comparativo", 
-    "Análisis de Campeones Más Seleccionados", "Análisis de Oro", "Análisis de Muertes", "Análisis de Estructuras"])
+tab_descripcion, tab_exploratorio, tab_frecuencia_campeones, tab_bans, tab_comparativo, tab_kills, tab_structures = st.tabs([
+    "Descripción", "Análisis Exploratorio", "Frecuencia de Campeones por Rol", "Frecuencia de Bans", 
+    "Análisis Comparativo", "Análisis de Muertes", "Análisis de Estructuras"])
 
 #----------------------------------------------------------
 # Descripción
 #----------------------------------------------------------
 with tab_descripcion:
     st.markdown('''
-    ## Análisis Avanzado de Composición de Campeones y Estrategias en League of Legends
+    ## League of Legends (LoL)
 
-    Este análisis presenta:
-    - Frecuencia de selección de campeones en cada rol.
-    - Estrategias de ban y su impacto potencial en el juego.
-    - Comparación de campeones seleccionados entre equipos.
-    - Análisis de campeones más seleccionados.
-    - Evolución de la diferencia de oro entre equipos a lo largo del tiempo.
-    - Distribución y localización de muertes en el campo de batalla.
-    - Destrucción de estructuras y su impacto en la partida.
+    League of Legends es un juego de estrategia en tiempo real y combate en equipo, desarrollado por Riot Games. 
+    En el juego, los jugadores asumen el rol de "campeones" con habilidades únicas y trabajan en conjunto para 
+    destruir la base del equipo contrario. Cada equipo está compuesto por cinco jugadores que ocupan roles específicos 
+    en el mapa y seleccionan campeones estratégicamente para obtener ventaja.
+
+    El juego se desarrolla en un mapa llamado **La Grieta del Invocador**, dividido en tres carriles (top, mid y bot) y 
+    una jungla. El objetivo final es destruir el "Nexo" del equipo enemigo, protegido por torretas y otras estructuras. 
+    Los equipos ganan oro a medida que eliminan súbditos, estructuras y campeones enemigos, lo que les permite 
+    comprar objetos y mejorar sus estadísticas.
+
+    ### Aspectos Clave del Análisis
     ''')
+    
+    # Imagen general de League of Legends (Mapa)
+    st.image("https://e00-especiales-marca.uecdn.es/esports/images/worlds22/asi-se-juega/mapa.jpg", caption="Mapa de La Grieta del Invocador en League of Legends")
+
+    st.markdown('''
+    - **Frecuencia de Selección de Campeones por Rol**: En cada partida, los equipos seleccionan campeones que se ajusten a roles específicos 
+      (Top, Jungle, Mid, ADC y Support). Aquí analizamos la popularidad de campeones en cada rol.
+
+    - **Estrategias de Ban**: Los equipos pueden "banear" campeones para evitar que el equipo contrario los seleccione. Este análisis examina los campeones más baneados y el impacto de estas decisiones.
+
+    - **Comparación de Campeones Seleccionados entre Equipos**: Comparación de los campeones elegidos por ambos equipos para evaluar cómo sus composiciones afectan los resultados de las partidas.
+
+    - **Análisis de Campeones Más Seleccionados**: Un análisis detallado de los campeones más elegidos en diferentes roles y el impacto de su selección en las partidas.
+
+    - **Evolución de la Diferencia de Oro**: Analizamos cómo varía la diferencia de oro entre los equipos a lo largo del tiempo, lo que indica la ventaja en términos de recursos.
+
+    - **Distribución y Localización de Muertes**: Un mapa de calor que muestra las áreas del mapa donde ocurren más muertes, lo que permite observar patrones de pelea entre los equipos.
+
+    - **Destrucción de Estructuras**: Análisis de las estructuras destruidas (como torretas e inhibidores) y su importancia en el progreso hacia la victoria.
+    ''')
+
+    # Imagen de los roles y carriles
+    st.image("https://cloudfront-us-east-1.images.arcpublishing.com/infobae/NHUPXSKK45FQBA47AU6B7FDL6Q.png", caption="Roles y Carriles en League of Legends")
+
+
+
+#----------------------------------------------------------
+# Análisis Exploratorio
+#----------------------------------------------------------
+with tab_exploratorio:
+    st.header("Análisis Exploratorio de Datos")
+
+    # Selector de Dataset
+    dataset_option = st.selectbox("Seleccione el Dataset para el Análisis Exploratorio", 
+                                  ("matchinfo", "LeagueofLegends", "gold", "kills", "structures"))
+
+    # Selección del DataFrame correspondiente
+    if dataset_option == "matchinfo":
+        df = match_info_df
+    elif dataset_option == "LeagueofLegends":
+        df = league_of_legends_df
+    elif dataset_option == "gold":
+        df = gold_df
+    elif dataset_option == "kills":
+        df = kills_df
+    elif dataset_option == "structures":
+        df = structures_df
+
+    # Mostrar las primeras 5 filas del DataFrame
+    st.subheader("Primeras 5 Filas del Dataset")
+    st.write(df.head())
+
+    # Mostrar la cantidad de filas y columnas del DataFrame
+    st.subheader("Dimensiones del Dataset")
+    st.write("Filas y Columnas:", df.shape)
+
+    # Mostrar los tipos de datos de cada columna
+    st.subheader("Tipos de Datos de Cada Columna")
+    st.write(df.dtypes)
+
+    # Identificar y mostrar columnas con valores nulos
+    st.subheader("Valores Nulos por Columna")
+    st.write(df.isnull().sum())
+
+    # Mostrar resumen estadístico de las columnas numéricas
+    st.subheader("Resumen Estadístico de las Columnas Numéricas")
+    st.write(df.describe())
+
+    # Mostrar frecuencia de valores únicos en una columna categórica seleccionada
+    categorical_columns = df.select_dtypes(include=['object']).columns.tolist()
+    if categorical_columns:
+        column_to_analyze = st.selectbox("Seleccione una Columna Categórica para Análisis de Frecuencia", categorical_columns)
+        st.write(f"Frecuencia de Valores Únicos en {column_to_analyze}")
+        st.write(df[column_to_analyze].value_counts())
+    else:
+        st.write("No hay columnas categóricas en este dataset para análisis de frecuencia.")
+
 
 #----------------------------------------------------------
 # Frecuencia de Campeones por Rol
@@ -89,47 +169,6 @@ with tab_bans:
                       labels={'Champion': 'Campeón', 'Ban_Frequency': 'Frecuencia de Bans'},
                       color='Ban_Frequency', color_continuous_scale="reds")
     st.plotly_chart(fig_bans, use_container_width=True)
-
-#----------------------------------------------------------
-# Análisis Comparativo
-#----------------------------------------------------------
-with tab_comparativo:
-    st.header("Análisis Comparativo entre Equipos (Azul vs Rojo)")
-
-    team_data = {
-        'Equipo': ['Azul', 'Rojo'],
-        'Top': [match_info_df['blueTopChamp'].value_counts().idxmax(), match_info_df['redTopChamp'].value_counts().idxmax()],
-        'Jungle': [match_info_df['blueJungleChamp'].value_counts().idxmax(), match_info_df['redJungleChamp'].value_counts().idxmax()],
-        'Middle': [match_info_df['blueMiddleChamp'].value_counts().idxmax(), match_info_df['redMiddleChamp'].value_counts().idxmax()],
-        'ADC': [match_info_df['blueADCChamp'].value_counts().idxmax(), match_info_df['redADCChamp'].value_counts().idxmax()],
-        'Support': [match_info_df['blueSupportChamp'].value_counts().idxmax(), match_info_df['redSupportChamp'].value_counts().idxmax()]
-    }
-    team_comparison_df = pd.DataFrame(team_data)
-
-    st.write("Comparativa de campeones más seleccionados entre equipos:")
-    st.dataframe(team_comparison_df)
-
-    fig_compare = go.Figure(data=[
-        go.Bar(name='Equipo Azul', x=team_comparison_df.columns[1:], y=team_comparison_df.loc[0, team_comparison_df.columns[1:]]),
-        go.Bar(name='Equipo Rojo', x=team_comparison_df.columns[1:], y=team_comparison_df.loc[1, team_comparison_df.columns[1:]])
-    ])
-    fig_compare.update_layout(barmode='group', title="Comparativa de Campeones Más Seleccionados por Rol en Equipos Azul y Rojo")
-    st.plotly_chart(fig_compare, use_container_width=True)
-
-#----------------------------------------------------------
-# Análisis de Oro
-#----------------------------------------------------------
-with tab_gold:
-    st.header("Análisis de Diferencias de Oro a lo Largo del Tiempo")
-
-    gold_diff_df = gold_df[gold_df['Type'] == 'golddiff']
-    gold_diff_df = gold_diff_df.drop(columns=['Address', 'Type'])
-    gold_diff_df = gold_diff_df.melt(var_name='Minute', value_name='Gold Difference')
-    gold_diff_df['Minute'] = gold_diff_df['Minute'].str.extract(r'(\d+)').astype(int)
-    fig_gold = px.line(gold_diff_df, x='Minute', y='Gold Difference', title="Evolución de la Diferencia de Oro",
-                       labels={'Minute': 'Minuto', 'Gold Difference': 'Diferencia de Oro'},
-                       color_discrete_sequence=["gold"])
-    st.plotly_chart(fig_gold, use_container_width=True)
 
 #----------------------------------------------------------
 # Análisis de Muertes
