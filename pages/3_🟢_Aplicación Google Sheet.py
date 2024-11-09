@@ -13,6 +13,8 @@ La interfaz de usuario de Streamlit permite al usuario ingresar el ID de la hoja
 y visualizar los datos procesados.
 """)
 
+st.markdown("ID de la hoja de cálculo: 1haojN6w9AaJBX-DLSlA4W7SjuRF9QQX2vyONYp23oJU ")
+
 # Definir los alcances de Google Sheets
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
