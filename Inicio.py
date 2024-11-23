@@ -49,7 +49,6 @@ with col5:
     st.image("./static/Angello.png", width=200)  # Tamaño estandarizado
     st.write("*Angello Gomez*")
     st.write("Machine Learning Specialist")
-    st.write("Optimiza el modelo de ChatGPT para ofrecer respuestas personalizadas.")
 
 
 # Descripción del proyecto
