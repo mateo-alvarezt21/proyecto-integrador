@@ -16,9 +16,9 @@ kills_df = pd.read_csv('archive/kills.csv')
 structures_df = pd.read_csv('archive/structures.csv')
 
 # Tabs para organizar el contenido
-tab_descripcion, tab_exploratorio, tab_frecuencia_campeones, tab_bans, tab_comparativo, tab_kills, tab_structures = st.tabs([
-    "Descripción", "Análisis Exploratorio", "Frecuencia de Campeones por Rol", "Frecuencia de Bans", 
-    "Análisis Comparativo", "Análisis de Muertes", "Análisis de Estructuras"])
+tab_descripcion, tab_frecuencia_campeones, tab_kills, tab_structures = st.tabs([
+    "Descripción", "Frecuencia de Campeones por Rol", 
+    "Análisis de Muertes", "Análisis de Estructuras"])
 
 #----------------------------------------------------------
 # Descripción
@@ -32,7 +32,7 @@ with tab_descripcion:
     destruir la base del equipo contrario. Cada equipo está compuesto por cinco jugadores que ocupan roles específicos 
     en el mapa y seleccionan campeones estratégicamente para obtener ventaja.
 
-    El juego se desarrolla en un mapa llamado **La Grieta del Invocador**, dividido en tres carriles (top, mid y bot) y 
+    El juego se desarrolla en un mapa llamado *La Grieta del Invocador*, dividido en tres carriles (top, mid y bot) y 
     una jungla. El objetivo final es destruir el "Nexo" del equipo enemigo, protegido por torretas y otras estructuras. 
     Los equipos ganan oro a medida que eliminan súbditos, estructuras y campeones enemigos, lo que les permite 
     comprar objetos y mejorar sus estadísticas.
@@ -44,78 +44,47 @@ with tab_descripcion:
     st.image("https://e00-especiales-marca.uecdn.es/esports/images/worlds22/asi-se-juega/mapa.jpg", caption="Mapa de La Grieta del Invocador en League of Legends")
 
     st.markdown('''
-    - **Frecuencia de Selección de Campeones por Rol**: En cada partida, los equipos seleccionan campeones que se ajusten a roles específicos 
+    - *Frecuencia de Selección de Campeones por Rol*: En cada partida, los equipos seleccionan campeones que se ajusten a roles específicos 
       (Top, Jungle, Mid, ADC y Support). Aquí analizamos la popularidad de campeones en cada rol.
 
-    - **Estrategias de Ban**: Los equipos pueden "banear" campeones para evitar que el equipo contrario los seleccione. Este análisis examina los campeones más baneados y el impacto de estas decisiones.
+    - *Estrategias de Ban*: Los equipos pueden "banear" campeones para evitar que el equipo contrario los seleccione. Este análisis examina los campeones más baneados y el impacto de estas decisiones.
 
-    - **Comparación de Campeones Seleccionados entre Equipos**: Comparación de los campeones elegidos por ambos equipos para evaluar cómo sus composiciones afectan los resultados de las partidas.
+    - *Comparación de Campeones Seleccionados entre Equipos*: Comparación de los campeones elegidos por ambos equipos para evaluar cómo sus composiciones afectan los resultados de las partidas.
 
-    - **Análisis de Campeones Más Seleccionados**: Un análisis detallado de los campeones más elegidos en diferentes roles y el impacto de su selección en las partidas.
+    - *Análisis de Campeones Más Seleccionados*: Un análisis detallado de los campeones más elegidos en diferentes roles y el impacto de su selección en las partidas.
 
-    - **Evolución de la Diferencia de Oro**: Analizamos cómo varía la diferencia de oro entre los equipos a lo largo del tiempo, lo que indica la ventaja en términos de recursos.
+    - *Evolución de la Diferencia de Oro*: Analizamos cómo varía la diferencia de oro entre los equipos a lo largo del tiempo, lo que indica la ventaja en términos de recursos.
 
-    - **Distribución y Localización de Muertes**: Un mapa de calor que muestra las áreas del mapa donde ocurren más muertes, lo que permite observar patrones de pelea entre los equipos.
+    - *Distribución y Localización de Muertes*: Un mapa de calor que muestra las áreas del mapa donde ocurren más muertes, lo que permite observar patrones de pelea entre los equipos.
 
-    - **Destrucción de Estructuras**: Análisis de las estructuras destruidas (como torretas e inhibidores) y su importancia en el progreso hacia la victoria.
+    - *Destrucción de Estructuras*: Análisis de las estructuras destruidas (como torretas e inhibidores) y su importancia en el progreso hacia la victoria.
     ''')
 
     # Imagen de los roles y carriles
     st.image("https://cloudfront-us-east-1.images.arcpublishing.com/infobae/NHUPXSKK45FQBA47AU6B7FDL6Q.png", caption="Roles y Carriles en League of Legends")
 
 
-
 #----------------------------------------------------------
 # Análisis Exploratorio
 #----------------------------------------------------------
-with tab_exploratorio:
-    st.header("Análisis Exploratorio de Datos")
+#with tab_exploratorio:
+    # st.header("Análisis Exploratorio de Datos")
 
-    # Selector de Dataset
-    dataset_option = st.selectbox("Seleccione el Dataset para el Análisis Exploratorio", 
-                                  ("matchinfo", "LeagueofLegends", "gold", "kills", "structures"))
+    # # Selector de Dataset
+    # dataset_option = st.selectbox("Seleccione el Dataset para el Análisis Exploratorio", 
+    #                               ("matchinfo", "LeagueofLegends", "gold", "kills", "structures"))
 
-    # Selección del DataFrame correspondiente
-    if dataset_option == "matchinfo":
-        df = match_info_df
-    elif dataset_option == "LeagueofLegends":
-        df = league_of_legends_df
-    elif dataset_option == "gold":
-        df = gold_df
-    elif dataset_option == "kills":
-        df = kills_df
-    elif dataset_option == "structures":
-        df = structures_df
-
-    # Mostrar las primeras 5 filas del DataFrame
-    st.subheader("Primeras 5 Filas del Dataset")
-    st.write(df.head())
-
-    # Mostrar la cantidad de filas y columnas del DataFrame
-    st.subheader("Dimensiones del Dataset")
-    st.write("Filas y Columnas:", df.shape)
-
-    # Mostrar los tipos de datos de cada columna
-    st.subheader("Tipos de Datos de Cada Columna")
-    st.write(df.dtypes)
-
-    # Identificar y mostrar columnas con valores nulos
-    st.subheader("Valores Nulos por Columna")
-    st.write(df.isnull().sum())
-
-    # Mostrar resumen estadístico de las columnas numéricas
-    st.subheader("Resumen Estadístico de las Columnas Numéricas")
-    st.write(df.describe())
-
-    # Mostrar frecuencia de valores únicos en una columna categórica seleccionada
-    categorical_columns = df.select_dtypes(include=['object']).columns.tolist()
-    if categorical_columns:
-        column_to_analyze = st.selectbox("Seleccione una Columna Categórica para Análisis de Frecuencia", categorical_columns)
-        st.write(f"Frecuencia de Valores Únicos en {column_to_analyze}")
-        st.write(df[column_to_analyze].value_counts())
-    else:
-        st.write("No hay columnas categóricas en este dataset para análisis de frecuencia.")
-
+    # # Selección del DataFrame correspondiente
+    # if dataset_option == "matchinfo":
+    #     df = match_info_df
+    # elif dataset_option == "LeagueofLegends":
+    #     df = league_of_legends_df
+    # elif dataset_option == "gold":
+    #     df = gold_df
+    # elif dataset_option == "kills":
+    #     df = kills_df
+    # elif dataset_option == "structures":
+    #     df = structures_df
 
 #----------------------------------------------------------
 # Frecuencia de Campeones por Rol
@@ -153,7 +122,7 @@ with tab_frecuencia_campeones:
 #----------------------------------------------------------
 # Frecuencia de Bans
 #----------------------------------------------------------
-with tab_bans:
+# with tab_bans:
     st.header("Análisis de Frecuencia de Bans")
 
     ban_frequencies = {}
@@ -168,7 +137,7 @@ with tab_bans:
                       title="Top 10 Campeones Más Baneados",
                       labels={'Champion': 'Campeón', 'Ban_Frequency': 'Frecuencia de Bans'},
                       color='Ban_Frequency', color_continuous_scale="reds")
-    st.plotly_chart(fig_bans, use_container_width=True)
+    st.plotly_chart(fig_bans, use_container_width=True) 
 
 #----------------------------------------------------------
 # Análisis de Muertes
